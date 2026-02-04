@@ -1,9 +1,9 @@
 cat > zi.sh <<'BASH'
 #!/bin/bash
-# ZIVPN UDP + Modern Tailwind Web Panel
-# - Fixed Copy button functionality
-# - Working Dark/Light mode toggle
-# - Enhanced UI with glassmorphism design
+# ZIVPN UDP + Fully Responsive Modern Web Panel
+# - Mobile & Desktop optimized UI
+# - Touch-friendly interface
+# - Adaptive layouts for all screen sizes
 
 set -euo pipefail
 
@@ -89,7 +89,7 @@ fi
 ufw allow 5667/udp || true
 ufw allow 8088/tcp || true
 
-echo "==> Setting up Modern Web Admin Panel..."
+echo "==> Setting up Responsive Web Admin Panel..."
 mkdir -p "${ADMIN_DIR}"
 python3 -m venv "${VENV}"
 "${VENV}/bin/pip" install flask waitress > /dev/null
@@ -109,7 +109,7 @@ ZIVPN_CONFIG=${ZIVPN_CFG}
 ZIVPN_SERVICE=${ZIVPN_SVC}
 EOF
 
-# ------------------- app.py with Modern UI -------------------
+# ------------------- app.py with Fully Responsive UI -------------------
 cat > "${APP_PY}" <<'PY'
 #!/usr/bin/env python3
 import os, json, sqlite3, tempfile, subprocess, time, random
@@ -194,7 +194,7 @@ def login_required(f):
         return f(*a,**kw)
     return w
 
-# ---------- Login Page ----------
+# ---------- Login Page (Mobile Optimized) ----------
 @app.route("/login",methods=["GET","POST"])
 def login():
     if request.method=="POST":
@@ -206,10 +206,17 @@ def login():
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZIVPN | Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @media (max-width: 640px) {
+            .login-container {
+                margin: 0 !important;
+                border-radius: 0 !important;
+                min-height: 100vh !important;
+            }
+        }
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -241,7 +248,7 @@ def login():
             <p class="text-white/80">Secure VPN Management Panel</p>
         </div>
         
-        <div class="glass rounded-2xl shadow-2xl p-8">
+        <div class="glass rounded-2xl shadow-2xl p-6 sm:p-8 login-container">
             <h2 class="text-xl font-semibold text-white mb-6">Sign in to continue</h2>
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -263,7 +270,7 @@ def login():
                             </svg>
                         </div>
                         <input name="u" type="text" required 
-                               class="w-full pl-10 pr-4 py-3 rounded-xl input-glass text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
+                               class="w-full pl-10 pr-4 py-3 rounded-xl input-glass text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 text-base"
                                placeholder="Enter username">
                     </div>
                 </div>
@@ -277,13 +284,13 @@ def login():
                             </svg>
                         </div>
                         <input name="p" type="password" required 
-                               class="w-full pl-10 pr-4 py-3 rounded-xl input-glass text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
+                               class="w-full pl-10 pr-4 py-3 rounded-xl input-glass text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 text-base"
                                placeholder="Enter password">
                     </div>
                 </div>
                 
                 <button type="submit" 
-                        class="w-full bg-white text-indigo-600 hover:bg-gray-100 font-semibold py-3 px-4 rounded-xl transition duration-200 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-white">
+                        class="w-full bg-white text-indigo-600 hover:bg-gray-100 font-semibold py-3 px-4 rounded-xl transition duration-200 active:scale-95 touch-manipulation">
                     Sign In
                 </button>
             </form>
@@ -302,7 +309,7 @@ def login():
 </body>
 </html>''')
 
-# ---------- Main Dashboard ----------
+# ---------- Main Dashboard (Fully Responsive) ----------
 @app.route("/")
 @login_required
 def index():
@@ -323,11 +330,12 @@ def index():
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>ZIVPN Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
+        /* Base styles for all devices */
         .gradient-bg {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
@@ -335,27 +343,93 @@ def index():
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         }
         .glass {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
         .dark-glass {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 23, 42, 0.9);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .shadow-soft {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        
+        /* Mobile-specific optimizations */
+        @media (max-width: 640px) {
+            .mobile-padding {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            .mobile-stack {
+                flex-direction: column;
+            }
+            .mobile-full {
+                width: 100% !important;
+            }
+            .mobile-text-sm {
+                font-size: 0.875rem;
+            }
+            .mobile-text-xs {
+                font-size: 0.75rem;
+            }
+            .mobile-hide {
+                display: none;
+            }
+            .mobile-show {
+                display: block;
+            }
+            .mobile-table {
+                font-size: 0.75rem;
+            }
+            .mobile-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+            }
+            .mobile-stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.75rem !important;
+            }
+            .mobile-icon-only {
+                min-width: 44px !important;
+                min-height: 44px !important;
+            }
+            .mobile-touch-target {
+                min-height: 44px;
+                min-width: 44px;
+            }
         }
-        .dark-shadow {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        
+        /* Tablet optimizations */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .tablet-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .tablet-full {
+                width: 100%;
+            }
         }
+        
+        /* Desktop optimizations */
+        @media (min-width: 1025px) {
+            .desktop-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* Common responsive utilities */
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
         .fade-in {
             animation: fadeIn 0.3s ease-in-out;
         }
+        .touch-manipulation {
+            touch-action: manipulation;
+        }
+        .safe-area-padding {
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -366,12 +440,27 @@ def index():
         document.addEventListener('DOMContentLoaded', function() {
             const savedTheme = localStorage.getItem('zivpn-theme');
             const html = document.documentElement;
+            const isMobile = window.innerWidth <= 768;
             
             if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
                 updateThemeIcons(true);
             } else {
                 updateThemeIcons(false);
+            }
+            
+            // Mobile-specific optimizations
+            if (isMobile) {
+                // Make all buttons touch-friendly
+                document.querySelectorAll('button').forEach(btn => {
+                    btn.classList.add('touch-manipulation');
+                });
+                
+                // Adjust table layout for mobile
+                const table = document.querySelector('table');
+                if (table) {
+                    table.classList.add('mobile-table');
+                }
             }
             
             // Auto-copy when password field is focused
@@ -411,45 +500,50 @@ def index():
             }
         }
         
-        // Copy to clipboard - FIXED FUNCTION
+        // Copy to clipboard - Mobile optimized
         function copyToClipboard(text) {
-            if (!navigator.clipboard) {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showCopySuccess();
-                return;
+            // Create a temporary input element for mobile compatibility
+            const tempInput = document.createElement('input');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopySuccess();
+                } else {
+                    // Fallback to modern API if available
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            showCopySuccess();
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error('Copy failed:', err);
+                // Final fallback
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        showCopySuccess();
+                    });
+                }
             }
             
-            navigator.clipboard.writeText(text).then(() => {
-                showCopySuccess();
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                // Try fallback method
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showCopySuccess();
-            });
+            document.body.removeChild(tempInput);
         }
         
         function showCopySuccess() {
-            // Create and show custom toast
+            // Mobile-friendly toast
             const toast = document.createElement('div');
-            toast.className = 'fixed top-4 right-4 z-50 px-4 py-2 rounded-lg bg-emerald-500 text-white shadow-lg fade-in';
+            toast.className = 'fixed top-4 right-4 z-50 px-4 py-3 rounded-lg bg-emerald-500 text-white shadow-lg fade-in mobile-touch-target';
             toast.innerHTML = `
                 <div class="flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
-                    <span>Password copied to clipboard!</span>
+                    <span class="text-sm font-medium">Copied!</span>
                 </div>
             `;
             document.body.appendChild(toast);
@@ -457,7 +551,7 @@ def index():
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
                 setTimeout(() => toast.remove(), 300);
-            }, 2000);
+            }, 1500);
         }
         
         // Edit user function
@@ -466,31 +560,37 @@ def index():
             document.querySelector('input[name="password"]').value = password;
             document.querySelector('input[name="expires"]').value = expires;
             
-            document.getElementById('userForm').scrollIntoView({ 
+            // Scroll to form with mobile consideration
+            const form = document.getElementById('userForm');
+            form.scrollIntoView({ 
                 behavior: 'smooth',
                 block: 'start'
             });
             
             // Highlight the form
-            const form = document.getElementById('userForm');
             form.classList.add('ring-2', 'ring-indigo-500');
             setTimeout(() => {
                 form.classList.remove('ring-2', 'ring-indigo-500');
             }, 2000);
         }
         
-        // Confirm delete
+        // Confirm delete - Mobile friendly
         function confirmDelete(username) {
             return Swal.fire({
                 title: 'Delete User?',
-                text: `Are you sure you want to delete "${username}"?`,
+                text: `Delete "${username}"?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Yes, delete it!',
+                confirmButtonText: 'Delete',
                 cancelButtonText: 'Cancel',
-                reverseButtons: true
+                reverseButtons: true,
+                customClass: {
+                    popup: 'mobile-text-sm',
+                    confirmButton: 'mobile-btn',
+                    cancelButton: 'mobile-btn'
+                }
             }).then((result) => {
                 return result.isConfirmed;
             });
@@ -498,19 +598,92 @@ def index():
         
         // Auto-generate password
         function generatePassword() {
-            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
             let password = '';
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 12; i++) {
                 password += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             document.querySelector('input[name="password"]').value = password;
             copyToClipboard(password);
         }
+        
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+        
+        // Detect mobile device
+        function isMobileDevice() {
+            return window.innerWidth <= 768;
+        }
     </script>
 </head>
-<body class="gradient-bg dark:dark-gradient-bg min-h-screen transition-colors duration-300">
-    <!-- Navigation -->
-    <nav class="glass dark:dark-glass sticky top-0 z-50 transition-colors duration-300">
+<body class="gradient-bg dark:dark-gradient-bg min-h-screen transition-colors duration-300 safe-area-padding">
+    <!-- Mobile Navigation -->
+    <nav class="glass dark:dark-glass sticky top-0 z-50 transition-colors duration-300 lg:hidden">
+        <div class="px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="p-2 rounded-lg bg-indigo-500 mr-3">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold text-gray-800 dark:text-white">ZIVPN</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 mobile-icon-only">
+                        <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <svg id="moon-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 mobile-icon-only">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu Dropdown -->
+            <div id="mobile-menu" class="hidden mt-4 space-y-2">
+                <button onclick="generatePassword()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium py-3 flex items-center justify-center mobile-touch-target">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Generate Password
+                </button>
+                <form method="POST" action="/apply" onsubmit="return confirm('Apply configuration changes?');" class="w-full">
+                    <button type="submit" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium py-3 flex items-center justify-center mobile-touch-target">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Apply Changes
+                    </button>
+                </form>
+                <a href="/logout" class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium py-3 flex items-center justify-center mobile-touch-target block text-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    Logout
+                </a>
+            </div>
+            
+            <!-- Server Info for Mobile -->
+            <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                <div class="text-xs text-gray-600 dark:text-gray-400">
+                    <span class="font-medium">IP:</span> {{ vps_ip }} • <span class="font-medium">Port:</span> 5667/UDP
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Desktop Navigation -->
+    <nav class="glass dark:dark-glass sticky top-0 z-50 transition-colors duration-300 hidden lg:block">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
@@ -523,7 +696,7 @@ def index():
                         <span class="text-xl font-bold text-gray-800 dark:text-white">ZIVPN</span>
                         <span class="ml-2 px-2 py-1 text-xs rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">PRO</span>
                     </div>
-                    <div class="hidden md:block ml-10">
+                    <div class="ml-10">
                         <div class="flex items-baseline space-x-4">
                             <span class="px-3 py-2 rounded-md text-sm font-medium bg-indigo-500 text-white">Dashboard</span>
                             <span class="text-gray-500 dark:text-gray-400 text-sm">IP: {{ vps_ip }}</span>
@@ -565,92 +738,92 @@ def index():
     </nav>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="glass dark:dark-glass rounded-2xl p-6 shadow-soft dark:dark-shadow transition-all duration-300 hover:shadow-lg dark:hover:shadow-xl">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+        <!-- Stats Cards - Responsive Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 mb-6 md:mb-8 mobile-stats-grid">
+            <div class="glass dark:dark-glass rounded-xl md:rounded-2xl p-4 md:p-6 shadow-soft dark:dark-shadow">
                 <div class="flex items-center">
-                    <div class="p-3 rounded-xl bg-indigo-100 dark:bg-indigo-900 mr-4">
-                        <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 md:p-3 rounded-lg md:rounded-xl bg-indigo-100 dark:bg-indigo-900 mr-3 md:mr-4">
+                        <svg class="w-6 h-6 md:w-8 md:h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-8.5a6 6 0 01-6 6m6-6a6 6 0 00-6-6m6 6H3m18 0a6 6 0 01-6 6m6-6a6 6 0 00-6-6"/>
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Total Users</p>
-                        <p class="text-3xl font-bold text-gray-800 dark:text-white">{{ total_users }}</p>
+                        <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">Total Users</p>
+                        <p class="text-xl md:text-3xl font-bold text-gray-800 dark:text-white">{{ total_users }}</p>
                     </div>
                 </div>
             </div>
             
-            <div class="glass dark:dark-glass rounded-2xl p-6 shadow-soft dark:dark-shadow transition-all duration-300 hover:shadow-lg dark:hover:shadow-xl">
+            <div class="glass dark:dark-glass rounded-xl md:rounded-2xl p-4 md:p-6 shadow-soft dark:dark-shadow">
                 <div class="flex items-center">
-                    <div class="p-3 rounded-xl bg-emerald-100 dark:bg-emerald-900 mr-4">
-                        <svg class="w-8 h-8 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 md:p-3 rounded-lg md:rounded-xl bg-emerald-100 dark:bg-emerald-900 mr-3 md:mr-4">
+                        <svg class="w-6 h-6 md:w-8 md:h-8 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z"/>
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Active Users</p>
-                        <p class="text-3xl font-bold text-gray-800 dark:text-white">{{ total_online }}</p>
+                        <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">Active Users</p>
+                        <p class="text-xl md:text-3xl font-bold text-gray-800 dark:text-white">{{ total_online }}</p>
                     </div>
                 </div>
             </div>
             
-            <div class="glass dark:dark-glass rounded-2xl p-6 shadow-soft dark:dark-shadow transition-all duration-300 hover:shadow-lg dark:hover:shadow-xl">
+            <div class="col-span-2 md:col-span-1 glass dark:dark-glass rounded-xl md:rounded-2xl p-4 md:p-6 shadow-soft dark:dark-shadow">
                 <div class="flex items-center">
-                    <div class="p-3 rounded-xl bg-blue-100 dark:bg-blue-900 mr-4">
-                        <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 md:p-3 rounded-lg md:rounded-xl bg-blue-100 dark:bg-blue-900 mr-3 md:mr-4">
+                        <svg class="w-6 h-6 md:w-8 md:h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Server Status</p>
-                        <p class="text-3xl font-bold text-gray-800 dark:text-white">Online</p>
+                        <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">Server Status</p>
+                        <p class="text-xl md:text-3xl font-bold text-gray-800 dark:text-white">Online</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Actions & Server Info -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <!-- Add User Form -->
+        <!-- Quick Actions & Server Info - Responsive Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+            <!-- Add User Form - Mobile Full Width -->
             <div class="lg:col-span-1">
-                <div class="glass dark:dark-glass rounded-2xl p-6 shadow-soft dark:dark-shadow transition-all duration-300">
-                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Add New User</h2>
-                    <form method="POST" action="/save" id="userForm" class="space-y-4">
+                <div class="glass dark:dark-glass rounded-xl md:rounded-2xl p-4 md:p-6 shadow-soft dark:dark-shadow mobile-full">
+                    <h2 class="text-base md:text-lg font-semibold text-gray-800 dark:text-white mb-3 md:mb-4">Add New User</h2>
+                    <form method="POST" action="/save" id="userForm" class="space-y-3 md:space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username</label>
+                            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 md:mb-2">Username</label>
                             <input type="text" name="username" required
-                                   class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200"
+                                   class="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg md:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm md:text-base"
                                    placeholder="Enter username">
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 md:mb-2">Password</label>
                             <div class="relative">
                                 <input type="text" name="password" required
-                                       class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200"
+                                       class="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg md:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm md:text-base"
                                        placeholder="Enter password">
                                 <button type="button" onclick="copyToClipboard(document.querySelector('input[name=\"password\"]').value)" 
-                                        class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 md:p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mobile-touch-target">
+                                    <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
                                     </svg>
                                 </button>
                             </div>
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Click the copy icon or generate button</p>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Tap copy icon or generate</p>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Expiration Date</label>
+                            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 md:mb-2">Expiration Date</label>
                             <input type="date" name="expires" value="{{ default_exp }}" required
-                                   class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200">
+                                   class="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg md:rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm md:text-base">
                         </div>
                         
                         <button type="submit"
-                                class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl transition duration-200 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            <div class="flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-2 md:py-3 px-4 rounded-lg md:rounded-xl transition duration-200 active:scale-95 touch-manipulation mobile-touch-target">
+                            <div class="flex items-center justify-center text-sm md:text-base">
+                                <svg class="w-4 h-4 md:w-5 md:h-5 mr-1 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                                 </svg>
                                 Create User Account
@@ -658,111 +831,109 @@ def index():
                         </button>
                     </form>
                     
-                    <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="mt-4 md:mt-6 pt-3 md:pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center text-xs md:text-sm text-gray-500 dark:text-gray-400">
+                            <svg class="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            <span>Server IP: {{ vps_ip }} | Port: 5667/UDP</span>
+                            <span class="truncate">IP: {{ vps_ip }} | Port: 5667/UDP</span>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Users Table -->
+            <!-- Users Table - Responsive Layout -->
             <div class="lg:col-span-2">
-                <div class="glass dark:dark-glass rounded-2xl shadow-soft dark:dark-shadow overflow-hidden transition-all duration-300">
-                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="glass dark:dark-glass rounded-xl md:rounded-2xl shadow-soft dark:dark-shadow overflow-hidden mobile-full">
+                    <div class="px-4 py-3 md:px-6 md:py-4 border-b border-gray-200 dark:border-gray-700">
                         <div class="flex justify-between items-center">
-                            <h2 class="text-lg font-semibold text-gray-800 dark:text-white">User Accounts</h2>
-                            <span class="px-3 py-1 text-sm rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
-                                Showing {{ rows|length }} accounts
+                            <h2 class="text-base md:text-lg font-semibold text-gray-800 dark:text-white">User Accounts</h2>
+                            <span class="px-2 py-1 text-xs rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
+                                {{ rows|length }} accounts
                             </span>
                         </div>
                     </div>
                     
                     <div class="overflow-x-auto scrollbar-hide">
-                        <table class="w-full">
+                        <table class="w-full min-w-[600px] md:min-w-0">
                             <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Password</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Expires</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                                    <th class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User</th>
+                                    <th class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Password</th>
+                                    <th class="hidden sm:table-cell px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Expires</th>
+                                    <th class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                    <th class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 {% for r in rows %}
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200">
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                    <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-                                                <span class="text-sm font-medium text-indigo-600 dark:text-indigo-400">{{ r.username[0]|upper }}</span>
+                                            <div class="flex-shrink-0 h-6 w-6 md:h-8 md:w-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+                                                <span class="text-xs md:text-sm font-medium text-indigo-600 dark:text-indigo-400">{{ r.username[0]|upper }}</span>
                                             </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ r.username }}</div>
-                                                <div class="text-xs text-gray-500 dark:text-gray-400">Created: {{ r.created }}</div>
+                                            <div class="ml-2 md:ml-4">
+                                                <div class="text-xs md:text-sm font-medium text-gray-900 dark:text-white truncate max-w-[80px] md:max-w-none">{{ r.username }}</div>
+                                                <div class="text-xs text-gray-500 dark:text-gray-400 hidden md:block">Created: {{ r.created }}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center space-x-2">
-                                            <code class="px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-mono text-sm transition-colors duration-200">{{ r.password }}</code>
+                                    <td class="px-3 py-2 md:px-6 md:py-4">
+                                        <div class="flex items-center space-x-1 md:space-x-2">
+                                            <code class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-mono text-xs md:text-sm truncate max-w-[80px] md:max-w-[120px]">{{ r.password }}</code>
                                             <button onclick="copyToClipboard('{{ r.password }}')" 
-                                                    class="px-3 py-1 text-xs bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition duration-200 flex items-center">
+                                                    class="px-2 py-1 text-xs bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded transition duration-200 flex items-center mobile-touch-target">
                                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
                                                 </svg>
-                                                Copy
+                                                <span class="hidden md:inline">Copy</span>
                                             </button>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <div class="text-sm text-gray-900 dark:text-white">{{ r.expires }}</div>
+                                    <td class="hidden sm:table-cell px-3 py-2 md:px-6 md:py-4">
+                                        <div class="text-xs md:text-sm text-gray-900 dark:text-white">{{ r.expires }}</div>
                                         <div class="text-xs">
                                             {% if r.days_left is not none %}
                                                 {% if r.days_left >= 0 %}
-                                                    <span class="text-emerald-600 dark:text-emerald-400">{{ r.days_left }} days left</span>
+                                                    <span class="text-emerald-600 dark:text-emerald-400">{{ r.days_left }} days</span>
                                                 {% else %}
-                                                    <span class="text-red-600 dark:text-red-400">Expired {{ -r.days_left }} days ago</span>
+                                                    <span class="text-red-600 dark:text-red-400">Expired</span>
                                                 {% endif %}
                                             {% endif %}
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-3 py-2 md:px-6 md:py-4">
                                         {% if not r.expired %}
-                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <span class="px-2 py-1 inline-flex text-xs leading-4 font-semibold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                                 </svg>
-                                                Active
+                                                <span class="hidden md:inline">Active</span>
                                             </span>
                                         {% else %}
-                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <span class="px-2 py-1 inline-flex text-xs leading-4 font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                                 </svg>
-                                                Expired
+                                                <span class="hidden md:inline">Expired</span>
                                             </span>
                                         {% endif %}
                                     </td>
-                                    <td class="px-6 py-4 text-sm font-medium">
-                                        <div class="flex space-x-2">
+                                    <td class="px-3 py-2 md:px-6 md:py-4">
+                                        <div class="flex space-x-1 md:space-x-2">
                                             <button onclick="editUser('{{ r.username }}', '{{ r.password }}', '{{ r.expires }}')"
-                                                    class="px-3 py-1 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-300 rounded-lg transition duration-200 flex items-center">
-                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    class="px-2 py-1 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-300 rounded transition duration-200 flex items-center mobile-touch-target">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                 </svg>
-                                                Edit
                                             </button>
                                             <form method="POST" action="/del/{{ r.id }}" onsubmit="return confirmDelete('{{ r.username }}')" class="inline">
                                                 <button type="submit"
-                                                        class="px-3 py-1 bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 text-red-700 dark:text-red-300 rounded-lg transition duration-200 flex items-center">
-                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        class="px-2 py-1 bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 text-red-700 dark:text-red-300 rounded transition duration-200 flex items-center mobile-touch-target">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                     </svg>
-                                                    Delete
                                                 </button>
                                             </form>
                                         </div>
@@ -774,28 +945,51 @@ def index():
                     </div>
                     
                     {% if not rows %}
-                    <div class="text-center py-12">
-                        <svg class="w-16 h-16 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="text-center py-8 md:py-12">
+                        <svg class="w-12 h-12 md:w-16 md:h-16 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">No users found</h3>
-                        <p class="mt-1 text-gray-500 dark:text-gray-400">Get started by creating your first user account.</p>
+                        <h3 class="mt-4 text-base md:text-lg font-medium text-gray-900 dark:text-white">No users found</h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Create your first user account</p>
                     </div>
                     {% endif %}
                 </div>
             </div>
         </div>
+        
+        <!-- Mobile Quick Actions Bottom Bar -->
+        <div class="lg:hidden fixed bottom-0 left-0 right-0 glass dark:dark-glass border-t border-gray-200 dark:border-gray-700 py-2 px-4 flex justify-between items-center safe-area-padding">
+            <button onclick="generatePassword()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium text-sm flex items-center mobile-touch-target">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                Generate
+            </button>
+            <form method="POST" action="/apply" onsubmit="return confirm('Apply changes?');" class="flex-1 mx-2">
+                <button type="submit" class="w-full px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium text-sm mobile-touch-target">
+                    Apply
+                </button>
+            </form>
+            <a href="/logout" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-sm flex items-center mobile-touch-target">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+            </a>
+        </div>
+        
+        <!-- Padding for mobile bottom bar -->
+        <div class="lg:hidden h-16"></div>
     </main>
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <div id="flash-{{ loop.index }}" class="fixed bottom-4 right-4 z-50 fade-in">
-                    <div class="glass dark:dark-glass rounded-xl p-4 shadow-soft dark:dark-shadow max-w-md">
+                <div id="flash-{{ loop.index }}" class="fixed bottom-16 md:bottom-4 right-4 z-50 fade-in" style="max-width: calc(100vw - 2rem);">
+                    <div class="glass dark:dark-glass rounded-xl p-3 md:p-4 shadow-soft dark:dark-shadow max-w-md">
                         <div class="flex items-center">
                             <div class="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900 mr-3">
-                                <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 md:w-5 md:h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
                             </div>
@@ -803,7 +997,7 @@ def index():
                                 <p class="text-sm font-medium text-gray-900 dark:text-white">Success!</p>
                                 <p class="text-xs text-gray-600 dark:text-gray-300 whitespace-pre-line">{{ message }}</p>
                             </div>
-                            <button onclick="document.getElementById('flash-{{ loop.index }}').remove()" class="ml-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                            <button onclick="document.getElementById('flash-{{ loop.index }}').remove()" class="ml-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 mobile-touch-target">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
@@ -845,7 +1039,7 @@ def save():
         ip=subprocess.check_output(["hostname","-I"]).decode().split()[0]
     except Exception:
         ip=request.host.split(":")[0]
-    msg=f"✅ User Created Successfully!\n\n👤 Username: {u}\n🔑 Password: {p}\n📅 Expires: {e}\n🌐 Server IP: {ip}\n🔌 Protocol: UDP (Port 5667)\n\nPassword has been auto-copied to clipboard."
+    msg=f"✅ User Created Successfully!\n\n👤 Username: {u}\n🔑 Password: {p}\n📅 Expires: {e}\n🌐 Server IP: {ip}\n🔌 Protocol: UDP (Port 5667)\n\nPassword copied to clipboard."
     flash(msg)
     sync();return redirect("/")
 
@@ -1139,13 +1333,16 @@ echo "║  🗑️  Uninstall:       sudo zivpn-uninstall.sh        ║"
 echo "║                    (add --purge to remove data)      ║"
 echo "╚═══════════════════════════════════════════════════════╝"
 echo ""
-echo "✨ New UI Features:"
-echo "   ✅ Working Copy buttons"
-echo "   ✅ Working Dark/Light mode toggle"
-echo "   ✅ Password auto-copy on focus"
-echo "   ✅ Generate password button"
-echo "   ✅ Smooth animations"
-echo "   ✅ Responsive design"
+echo "📱 Responsive Design Features:"
+echo "   ✅ Mobile-optimized navigation"
+echo "   ✅ Touch-friendly buttons (44px minimum)"
+echo "   ✅ Adaptive layouts for all screen sizes"
+echo "   ✅ Mobile bottom action bar"
+echo "   ✅ Safe area support (notch devices)"
+echo "   ✅ Optimized table views for mobile"
+echo "   ✅ Proper text sizes and spacing"
+echo "   ✅ Working copy buttons on all devices"
+echo "   ✅ Dark/Light mode works everywhere"
 echo ""
 BASH
 
@@ -1153,9 +1350,9 @@ chmod +x zi.sh
 
 # Run automatically
 if command -v sudo >/dev/null 2>&1; then
-  echo "🚀 Starting installation with Enhanced UI..."
+  echo "🚀 Starting installation with Fully Responsive UI..."
   sudo ./zi.sh
 else
-  echo "🚀 Starting installation with Enhanced UI..."
+  echo "🚀 Starting installation with Fully Responsive UI..."
   ./zi.sh
 fi
