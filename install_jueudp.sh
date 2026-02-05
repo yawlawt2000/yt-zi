@@ -9,7 +9,7 @@
 set -e
 
 # Domain Name
-DOMAIN="eg.jueudp.com"
+DOMAIN="yt.yawlawt.com"
 
 # PROTOCOL
 PROTOCOL="udp"
@@ -21,12 +21,12 @@ UDP_PORT=":36712"
 OBFS="agnudp"
 
 # PASSWORDS
-PASSWORD="jaideevpn"
+PASSWORD="ytplus"
 
 # Web Admin Panel Configuration
 WEB_PORT="8880"
 WEB_USERNAME="yaw"
-WEB_PASSWORD="yaw"
+WEB_PASSWORD="lawtaung"
 WEB_SESSION_SECRET="jueudp_secret_key_$(date +%s)"
 
 # Script paths
@@ -535,10 +535,10 @@ tpl_etc_hysteria_config_json() {
   "protocol": "$PROTOCOL",
   "cert": "/etc/hysteria/hysteria.server.crt",
   "key": "/etc/hysteria/hysteria.server.key",
-  "up": "100 Mbps",
-  "up_mbps": 100,
-  "down": "100 Mbps",
-  "down_mbps": 100,
+  "up": "20 Mbps",
+  "up_mbps": 20,
+  "down": "20 Mbps",
+  "down_mbps": 20,
   "disable_udp": false,
   "insecure": true,
   "obfs": "$OBFS",
@@ -726,7 +726,7 @@ def login():
         password = request.form.get('password')
         
         # Simple hardcoded admin credentials
-        if username == os.environ.get('WEB_USERNAME', 'admin') and password == os.environ.get('WEB_PASSWORD', 'jaideevpn@2024'):
+        if username == os.environ.get('WEB_USERNAME', 'yaw') and password == os.environ.get('WEB_PASSWORD', 'lawtaung'):
             session['logged_in'] = True
             session['username'] = username
             flash('Login successful!', 'success')
@@ -911,7 +911,7 @@ def start_service():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('WEB_PORT', 8080)))
+    app.run(host='0.0.0.0', port=int(os.environ.get('WEB_PORT', 8880)))
 EOF
 
     chmod +x "$WEB_DIR/web_app.py"
@@ -1025,7 +1025,7 @@ EOF
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - JUE-UDP Admin</title>
+    <title>Login - YT-UDP Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -1219,7 +1219,7 @@ EOF
                             </tr>
                             <tr>
                                 <th>Obfuscation:</th>
-                                <td>jaideevpn</td>
+                                <td>YT-Plus</td>
                             </tr>
                         </table>
                     </div>
@@ -1227,15 +1227,15 @@ EOF
                         <table class="table">
                             <tr>
                                 <th>Upload Speed:</th>
-                                <td>100 Mbps</td>
+                                <td>20 Mbps</td>
                             </tr>
                             <tr>
                                 <th>Download Speed:</th>
-                                <td>100 Mbps</td>
+                                <td>20 Mbps</td>
                             </tr>
                             <tr>
                                 <th>Domain:</th>
-                                <td>eg.jueudp.com</td>
+                                <td>y.ytudp.com</td>
                             </tr>
                         </table>
                     </div>
