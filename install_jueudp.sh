@@ -18,15 +18,15 @@ PROTOCOL="udp"
 UDP_PORT=":36712"
 
 # OBFS
-OBFS="jaideevpn"
+OBFS="agnudp"
 
 # PASSWORDS
 PASSWORD="jaideevpn"
 
 # Web Admin Panel Configuration
-WEB_PORT="8080"
-WEB_USERNAME="admin"
-WEB_PASSWORD="jaideevpn@2024"
+WEB_PORT="8880"
+WEB_USERNAME="yaw"
+WEB_PASSWORD="yaw"
 WEB_SESSION_SECRET="jueudp_secret_key_$(date +%s)"
 
 # Script paths
@@ -923,7 +923,7 @@ EOF
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JUE-UDP Admin Panel</title>
+    <title>YT-UDP Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <style>
