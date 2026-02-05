@@ -506,7 +506,7 @@ tpl_hysteria_server_x_service() {
 tpl_jueudp_web_service() {
     cat << EOF
 [Unit]
-Description=JUE-UDP Web Admin Panel
+Description=AGNUDP Web Admin Panel
 After=network.target hysteria-server.service
 
 [Service]
